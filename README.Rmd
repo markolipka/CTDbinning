@@ -1,0 +1,47 @@
+---
+title: "CTD binning"
+author: "Marko Lipka"
+date: "8/20/2018"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("CTDbinning.R")
+```
+
+# Example data
+
+## Raw data
+
+```{r}
+load("example_ctd") 
+ctd <- select(ctd, prDM : par)
+
+knitr::kable(ctd)
+```
+
+## Binned:
+```{r binned}
+binned <- binCTD.mean(.data = ctd,
+                      .binvar = "prDM",
+                      .binwidth = 1)
+
+knitr::kable(binned)
+```
+
+# Plot results:
+
+```{r plot}
+binned %>%
+    gather(key = "variable", value = "value", -bins, -prDM) %>%
+    ggplot() +
+    aes(x = prDM, y = value) +
+    geom_point(data = gather(ctd, key = "variable", value = "value", -prDM),
+               shape = 21) +
+    geom_point(color = "red") +
+    facet_grid(~variable, scales = "free") +
+    coord_flip() +
+    scale_x_reverse()
+```
+
