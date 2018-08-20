@@ -20,7 +20,7 @@ Example:
 Raw example data
 ----------------
 
-... from a CTD cast in the Arkona Basin (southern Baltic Sea).
+... from a CTD cast in the Arkona Basin (southern Baltic Sea). (... extracted from SBE CTD *.cnv* file with the helper function [**read.cnv.file()**](https://github.com/markolipka/readCNV))
 
 ``` r
 load("example_ctd") 
