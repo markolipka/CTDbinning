@@ -20,7 +20,7 @@ Example:
 Raw example data
 ----------------
 
-from a CTD cast in the Arkona Basin (southern Baltic Sea).
+... from a CTD cast in the Arkona Basin (southern Baltic Sea).
 
 ``` r
 load("example_ctd") 
@@ -100,12 +100,14 @@ knitr::kable(ctd, digits = 1)
 Binned:
 -------
 
-``` r
-binned <- binCTD.mean(.data = ctd,
-                      .binvar = "prDM",
-                      .binwidth = 1)
+### Example 1: binned by **.binwidth**
 
-knitr::kable(binned, digits = 1)
+``` r
+binned.binwidth <- binCTD.mean(.data = ctd,
+                               .binvar = "prDM",
+                               .binwidth = 1)
+
+knitr::kable(binned.binwidth, digits = 1)
 ```
 
 | bins     |  prDM|  c0mS.cm|  c1mS.cm|  t090C|  t190C|  sal00|  sal11|  sbeox0ML.L|  sbeox1ML.L|    svCM|  oxsatML.L|  altM|    par|
@@ -128,17 +130,15 @@ knitr::kable(binned, digits = 1)
 | (16,17\] |  16.5|     16.1|     16.1|    5.2|    5.2|   15.6|   15.6|         8.1|         8.1|  1447.4|          8|   1.9|    4.6|
 | (17,18\] |  17.3|     16.6|     16.6|    5.1|    5.1|   16.2|   16.2|         7.9|         8.0|  1447.7|          8|   2.1|    3.6|
 
-Plot results (unbinned vs binned):
-==================================
-
 ``` r
-binned %>%
+binned.binwidth %>%
     gather(key = "variable", value = "value", -bins, -prDM) %>%
     ggplot() +
     aes(x = prDM, y = value) +
+    geom_vline(xintercept = 1:18, color = "deeppink") +
     geom_point(data = gather(ctd, key = "variable", value = "value", -prDM),
                shape = 21) +
-    geom_point(color = "red") +
+    geom_point(color = "deeppink") +
     facet_grid(~variable, scales = "free", switch = "x") +
     coord_flip() +
     scale_x_reverse() +
@@ -146,7 +146,51 @@ binned %>%
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           strip.background = element_rect(fill = NA, colour = NA),
           strip.placement = "outside") +
-    ylab(NULL)
+    ylab(NULL) +
+    ggtitle("Plot (binned vs. unbinned)")
 ```
 
-![](README_files/figure-markdown_github/plot-1.png)
+![](README_files/figure-markdown_github/plot_binwidth-1.png)
+
+### Example 2: binned by **.breaks**
+
+``` r
+breaks <- c(0, 1:5, 10, 15, +Inf)
+binned.breaks <- binCTD.mean(.data = ctd,
+                               .binvar = "prDM",
+                               .breaks = breaks)
+
+knitr::kable(binned.breaks, digits = 1) # print table
+```
+
+| bins      |  prDM|  c0mS.cm|  c1mS.cm|  t090C|  t190C|  sal00|  sal11|  sbeox0ML.L|  sbeox1ML.L|    svCM|  oxsatML.L|  altM|    par|
+|:----------|-----:|--------:|--------:|------:|------:|------:|------:|-----------:|-----------:|-------:|----------:|-----:|------:|
+| (1,2\]    |   1.6|     14.2|     14.2|    6.1|    6.1|   13.2|   13.2|         8.7|         8.7|  1447.9|          8|  17.1|  385.0|
+| (2,3\]    |   2.5|     14.2|     14.2|    6.1|    6.1|   13.2|   13.2|         8.7|         8.7|  1447.9|          8|  16.4|  296.7|
+| (3,4\]    |   3.5|     14.2|     14.2|    6.1|    6.1|   13.2|   13.2|         8.7|         8.7|  1447.9|          8|  15.2|  216.3|
+| (4,5\]    |   4.5|     14.2|     14.2|    6.1|    6.1|   13.2|   13.2|         8.7|         8.7|  1447.9|          8|  14.3|  153.2|
+| (5,10\]   |   7.5|     14.4|     14.4|    6.0|    6.0|   13.5|   13.5|         8.7|         8.7|  1447.8|          8|  11.2|   68.1|
+| (10,15\]  |  12.6|     14.7|     14.7|    5.8|    5.8|   13.9|   14.0|         8.6|         8.6|  1447.5|          8|   6.0|   15.2|
+| (15,Inf\] |  16.4|     16.1|     16.1|    5.3|    5.3|   15.5|   15.5|         8.1|         8.2|  1447.5|          8|   2.3|    4.8|
+
+``` r
+binned.breaks %>%
+    gather(key = "variable", value = "value", -bins, -prDM) %>%
+    ggplot() +
+    aes(x = prDM, y = value) +
+    geom_vline(xintercept = breaks, color = "deeppink") +
+    geom_point(data = gather(ctd, key = "variable", value = "value", -prDM),
+               shape = 21) +
+    geom_point(color = "deeppink") +
+    facet_grid(~variable, scales = "free", switch = "x") +
+    coord_flip() +
+    scale_x_reverse() +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          strip.background = element_rect(fill = NA, colour = NA),
+          strip.placement = "outside") +
+    ylab(NULL) +
+    ggtitle("Plot (binned vs. unbinned)")
+```
+
+![](README_files/figure-markdown_github/plot_breaks-1.png)

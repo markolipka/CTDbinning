@@ -25,34 +25,35 @@ Arguments:
 
 ## Raw example data
 
-from a CTD cast in the Arkona Basin (southern Baltic Sea).
+... from a CTD cast in the Arkona Basin (southern Baltic Sea).
 
-```{r}
+```{r example}
 load("example_ctd") 
 ctd <- select(ctd, prDM : par)
 
 knitr::kable(ctd, digits = 1)
 ```
 
-## Binned:
-```{r binned}
-binned <- binCTD.mean(.data = ctd,
-                      .binvar = "prDM",
-                      .binwidth = 1)
+## Binned: 
 
-knitr::kable(binned, digits = 1)
+### Example 1: binned by **.binwidth**
+```{r binned_binwidth}
+binned.binwidth <- binCTD.mean(.data = ctd,
+                               .binvar = "prDM",
+                               .binwidth = 1)
+
+knitr::kable(binned.binwidth, digits = 1)
 ```
 
-# Plot results (unbinned vs binned):
-
-```{r plot}
-binned %>%
+```{r plot_binwidth}
+binned.binwidth %>%
     gather(key = "variable", value = "value", -bins, -prDM) %>%
     ggplot() +
     aes(x = prDM, y = value) +
+    geom_vline(xintercept = 1:18, color = "deeppink") +
     geom_point(data = gather(ctd, key = "variable", value = "value", -prDM),
                shape = 21) +
-    geom_point(color = "red") +
+    geom_point(color = "deeppink") +
     facet_grid(~variable, scales = "free", switch = "x") +
     coord_flip() +
     scale_x_reverse() +
@@ -60,6 +61,37 @@ binned %>%
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           strip.background = element_rect(fill = NA, colour = NA),
           strip.placement = "outside") +
-    ylab(NULL)
+    ylab(NULL) +
+    ggtitle("Plot (binned vs. unbinned)")
 ```
 
+### Example 2: binned by **.breaks**
+```{r binned_breaks}
+breaks <- c(0, 1:5, 10, 15, +Inf)
+binned.breaks <- binCTD.mean(.data = ctd,
+                               .binvar = "prDM",
+                               .breaks = breaks)
+
+knitr::kable(binned.breaks, digits = 1) # print table
+```
+
+
+```{r plot_breaks}
+binned.breaks %>%
+    gather(key = "variable", value = "value", -bins, -prDM) %>%
+    ggplot() +
+    aes(x = prDM, y = value) +
+    geom_vline(xintercept = breaks, color = "deeppink") +
+    geom_point(data = gather(ctd, key = "variable", value = "value", -prDM),
+               shape = 21) +
+    geom_point(color = "deeppink") +
+    facet_grid(~variable, scales = "free", switch = "x") +
+    coord_flip() +
+    scale_x_reverse() +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          strip.background = element_rect(fill = NA, colour = NA),
+          strip.placement = "outside") +
+    ylab(NULL) +
+    ggtitle("Plot (binned vs. unbinned)")
+```
