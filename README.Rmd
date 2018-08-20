@@ -31,7 +31,7 @@ from a CTD cast in the Arkona Basin (southern Baltic Sea).
 load("example_ctd") 
 ctd <- select(ctd, prDM : par)
 
-knitr::kable(ctd)
+knitr::kable(ctd, digits = 1)
 ```
 
 ## Binned:
@@ -40,7 +40,7 @@ binned <- binCTD.mean(.data = ctd,
                       .binvar = "prDM",
                       .binwidth = 1)
 
-knitr::kable(binned)
+knitr::kable(binned, digits = 1)
 ```
 
 # Plot results (unbinned vs binned):
@@ -53,8 +53,13 @@ binned %>%
     geom_point(data = gather(ctd, key = "variable", value = "value", -prDM),
                shape = 21) +
     geom_point(color = "red") +
-    facet_grid(~variable, scales = "free") +
+    facet_grid(~variable, scales = "free", switch = "x") +
     coord_flip() +
-    scale_x_reverse()
+    scale_x_reverse() +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          strip.background = element_rect(fill = NA, colour = NA),
+          strip.placement = "outside") +
+    ylab(NULL)
 ```
 
