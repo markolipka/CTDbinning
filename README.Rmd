@@ -10,9 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 source("CTDbinning.R")
 ```
 
-Functions are defined in **CTDbinning.R**.
+Function is defined in **CTDbinning.R**.
 
-Function *binCTD.mean()* applies the *mean()* function to all parameters of a given data frame binned by one of its parameter (usually depth or pressure).
+Function *binCTD.mean()* applies the *mean()* function to all parameters of a given data frame binned by one of its parameters (usually depth or pressure).
 
 Arguments:
 
@@ -29,10 +29,12 @@ Arguments:
 (... extracted from SBE CTD *.cnv* file with the helper function [**read.cnv.file()**](https://github.com/markolipka/readCNV))
 
 ```{r example}
-load("example_ctd") 
-ctd <- select(ctd, prDM : par)
+load("example_ctd") # load dumped example data frame
+ctd <- select(ctd, prDM : par) # reduce number of parameters for greater clarity
 
-knitr::kable(ctd, digits = 1)
+knitr::kable(head(ctd), digits = 1) # print table head
+
+knitr::kable(tail(ctd), digits = 1) # print table tail
 ```
 
 ## Binned: 
@@ -96,3 +98,7 @@ binned.breaks %>%
     ylab(NULL) +
     ggtitle("Plot (binned vs. unbinned)")
 ```
+
+# ToDo:
+
+- might be useful to allow other functions than *mean()* for summarizing?!
