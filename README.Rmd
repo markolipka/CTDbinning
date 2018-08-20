@@ -10,9 +10,22 @@ knitr::opts_chunk$set(echo = TRUE)
 source("CTDbinning.R")
 ```
 
-# Example data
+Functions are defined in **CTDbinning.R**.
 
-## Raw data
+Function *binCTD.mean()* applies the *mean()* function to all parameters of a given data frame binned by one of its parameter (usually depth or pressure).
+
+Arguments:
+
+- **.data**: the data.frame to be summarized
+- **.binvar**: the variable name to bin over
+- **.breaks**: breaks as used by *cut()* (either a single value giving the number of equally distributed bins or a vector of cut points)
+- **.binwidth**: alternatively to **.breaks** the binwidth can be set (overwrites **.breaks**)
+
+# Example:
+
+## Raw example data
+
+from a CTD cast in the Arkona Basin (southern Baltic Sea).
 
 ```{r}
 load("example_ctd") 
@@ -30,7 +43,7 @@ binned <- binCTD.mean(.data = ctd,
 knitr::kable(binned)
 ```
 
-# Plot results:
+# Plot results (unbinned vs binned):
 
 ```{r plot}
 binned %>%
